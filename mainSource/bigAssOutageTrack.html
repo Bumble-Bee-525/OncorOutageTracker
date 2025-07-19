@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=5.0, user-scalable=1.0, initial-scale=1, shrink-to-fit=no">
+  <meta name="theme-color" content="#000000">
+  <link rel="manifest" href="https://kubra.io/product/5.42.4/manifest.json">
+  <link rel="shortcut icon" href="https://swift-static-content.s3.amazonaws.com/Oncor/favicon.ico">
+  <title>Power Outage Buffoonery</title>
+  <style>#root,body,html{height:100%;font-size:62.5%;margin:0}</style>
+  <script>
+    var BOOTSTRAP_CONFIG = {
+      /* config goes here */
+      api: {
+        swift: {
+          host: 'https://kubra.io',
+          dataBucket: 'https://kubra.io',
+          instanceId: '560abba3-7881-4741-b538-ca416b58ba1e',
+          viewId: 'ca124b24-9a06-4b19-aeb3-1841a9c962e1',
+          preview: false,
+          previewAvailable: false
+        },
+      },
+      auth: {
+        silentCallbackPath: '/login/silent-callback',
+        callbackPath: '/login/callback',
+        logoutPath: '/login/logout',
+      },
+      embedded: false,
+      containerId: 'root',
+      loginRequired: false,
+      language: 'en-US',
+      // friendlyErrorMessage: 'Sorry friend, an error occurred.',
+      // address: 'Denver, CO',
+      // lat: '29.7604',
+      // lng: '-95.3698',
+      // zoom: 12,
+    };
+  </script>
+  <script src="https://kubra.io/product/5.42.4/static/js/kubra.chunk.js"></script>
+  <script src="https://kubra.io/product/5.42.4/static/js/react.chunk.js"></script>
+  <script src="https://kubra.io/product/5.42.4/static/js/vendor.chunk.js"></script>
+  <script src="https://kubra.io/product/5.42.4/static/js/main.js"></script>
+</head>
+
+<body>
+  <div id="root"></div>
+</body>
+<script>
+  function getData()
+  {
+    StormCenter.create(BOOTSTRAP_CONFIG);
+
+    var totalOutages;
+    var totalCustomersAffected;
+    var time;
+
+    setTimeout(
+        function()
+        {
+            //get date/time
+            var time = document.getElementsByClassName("last-updated-date")
+            time = time[0].children[0].innerText.replaceAll(",", "");
+            time = time.replaceAll(" ", "-")
+            time = time.replaceAll(":", "-")
+
+            
+            //get the outage info
+            const totalInfoArray = document.getElementsByClassName("SummaryCardStyles__SummaryDataStyles-sc-s6he23-4")
+            totalOutages = totalInfoArray[0].innerText.replaceAll(",", "");;
+            totalCustomersAffected = totalInfoArray[1].innerText.replaceAll(",", "");
+            console.log(totalOutages + " " + totalCustomersAffected);
+            
+            //save the info to computer
+            const link = document.createElement("a");
+            const file = new Blob([totalOutages + "," + totalCustomersAffected], {type: 'text/plain'});
+            link.href = URL.createObjectURL(file);
+            link.download = time + ".txt";
+            link.click();
+            URL.revokeObjectURL(link.href);
+
+            //Reset the whole thing
+            location.reload();
+        }
+    , 5000);
+  }
+  getData();
+</script>
+</html>
